@@ -1,5 +1,4 @@
 const usuario = {
-    nome:'',
     login: '',
     senha: ''
 }

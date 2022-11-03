@@ -90,7 +90,7 @@ const handleOpenEditTarefa = (id) =>{
 }
 
 const editTarefa = (id, title, description) =>{
-let taskToEdit = {id, title, description}
+let taskToEdit = {id: Number(id), title, description}
 console.log(taskToEdit);
 var i = listaTarefas.findIndex((t) => t.id === Number(id));
 console.log(i);
