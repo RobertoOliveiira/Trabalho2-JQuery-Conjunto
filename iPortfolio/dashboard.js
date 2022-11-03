@@ -1,115 +1,124 @@
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
-const LISTA_CONTATOS = "lista_contatos";
-var listaContatos = new Array();
+const LISTA_TAREFAS = "lista_tarefas";
+var listaTarefas = [{id:1, title: 'Cacetar', description: 'cacetar o roxo'}]
 
 $(document).ready(() => {
   console.log("Dashboard");
-  limpaCampos();
   $("#msg .alert").hide();
+  $("#btn-salvar").click((e) => salvarContato());
 
-  if (!verificaLogin()) {
+  listarTarefas();
+
+  if (localStorage.getItem(LOGADO) == 'false') {
     window.location.href = "index.html";
   }
 
-  $("#btn-salvar").click((e) => salvarContato());
-
-  listarContatos();
 });
 
-const regEventClickTr = () => {
-    $("tr").click((e) => {
-        let tr = $(e.target.parentElement);
-        let regLinha = tr.find("td");
-        let tdId = regLinha[0];
-        $("#id").val($(tdId).html());
-        $("#nome").val($(regLinha[1]).html());
-        $("#email").val($(regLinha[2]).html());
-      });
-}
-
-const salvarContato = () => {
-  let nome = $("#nome");
-  let email = $("#email");
-  let id = $("#id");
-  let tamLista = listaContatos == null ? 0 : listaContatos.length;
-  let contato
-  let msg = "Por favor, preencher todos os campos...";
-  
-  if (listaContatos == null) {
-      listaContatos = new Array();
-    }
-    
-    if (nome.val() === "" || email.val() === "") {
-        $("#msg .alert").html(`<h3>${msg}</h3>`);
-        $(".toast-body").html(msg);
-        $("#msg .alert").fadeIn("slow", async () => {
-            await delay(3000);
-            $("#msg .alert").fadeOut("slow");
-        });
-        const toastLive = document.getElementById("liveToast");
-        const toast = new bootstrap.Toast(toastLive);
-        toast.show();
-        return;
-    }
-
-    contato = { id: 0, 
-        nome: nome.val(), 
-        email: email.val() };
-
-    if (id.val() !== "") {
-        var i = listaContatos.findIndex((contato) => contato.id === id.val());
-        contato.id = id.val();
-        listaContatos.splice(i,1,contato);
-    } else {
-        let idInsert = tamLista + 1;
-        contato.id = idInsert;
-        listaContatos.push(contato);
-  }
-
-  setJsonItem(LISTA_CONTATOS, listaContatos);
-  listarContatos();
-  limpaCampos();
-};
-
-const listarContatos = () => {
-  var listaHTML = $("#lista-contatos");
+const listarTarefas = () => {
+  var listaHTML = $("#lista-tarefas");
   listaHTML.html("");
-  listaContatos = new Array();
-  listaContatos = getJsonItem(LISTA_CONTATOS);
+    listaTarefas = getJsonItem(LISTA_TAREFAS);
 
-  if (listaContatos == null || listaContatos.length <= 0) return;
+  if (listaTarefas == null || listaTarefas.length <= 0) {
+    listaTarefas = [];
+    return;
+    };
 
-  listaContatos.forEach((c) => {
-    var linha = document.createElement("tr");
-    var colId = document.createElement("td");
-    var colNome = document.createElement("td");
-    var colEmail = document.createElement("td");
-    var colActions = document.createElement("td");
-    $(colActions).html(`<div class="d-flex">
-        <button onclick="removeItemList(${c.id});" 
-        class="btn btn-sm btn-danger">&times;</button>
-    </div>`);
+  listaTarefas.forEach((c) => {
+    const title = document.createElement("h3");
+    const description = document.createElement("p");
+    const dataContainer = document.createElement("div");
+    dataContainer.classList.add("container-inf");
+    const container = document.createElement("div");
+    container.classList.add("container-task");
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("container-botao");
+    criarBotao(c, buttonContainer)
 
-    $(colId).html(c.id);
-    $(colNome).html(c.nome);
-    $(colEmail).html(c.email);
-    $(linha).append(colId).append(colNome).append(colEmail).append(colActions);
-    listaHTML.append(linha);
+    $(title).html(c.title);
+    $(description).html(c.description);
+    dataContainer.append(title);
+    dataContainer.append(description);
+    container.append(dataContainer);
+    container.append(buttonContainer);
+    listaHTML.append(container);
   });
 
-  regEventClickTr();
 };
+
+const salvarTarefa = (title, description) =>{
+    const id = !!listaTarefas.length ? Math.max(...listaTarefas.map((t)=> t.id))+1 : 1
+    const newTask = {
+        id,
+        title,
+        description
+    }
+    listaTarefas.push(newTask);
+    setJsonItem(LISTA_TAREFAS, listaTarefas);
+    listarTarefas();
+}
+
+const handleSalvarTarefa = (e) =>{
+    console.log(e)
+}
+
+const criarBotao = (task,container ) => {
+    return $(container).html(`
+        <button data-bs-toggle="modal" data-bs-target="#editModal" 
+        onclick="handleOpenEditTarefa(${task.id});"
+        class="botao"><img src="_img/edit.png" alt="Editar tarefa"></button> 
+        <button onclick="removeItemList(${task.id});" 
+        class="botao"><img src="_img/delete.png" alt="Apagar tarefa"></button> `
+    );
+}
 
 const removeItemList = (id) => {
-  var i = listaContatos.findIndex((contato) => contato.id === id);
-  listaContatos.splice(i, 1);
+  var i = listaTarefas.findIndex((contato) => contato.id === id);
+  listaTarefas.splice(i, 1);
 
-  setJsonItem(LISTA_CONTATOS, listaContatos);
-  listarContatos();
+  setJsonItem(LISTA_TAREFAS, listaTarefas);
+  listarTarefas();
 };
 
-const limpaCampos = () =>{
-    $("#id").val("");
-    $("#nome").val("");
-    $("#email").val("");
+const handleOpenEditTarefa = (id) =>{
+    $("#id").html(id);
+    const foundTask = listaTarefas.find((t)=>t.id === id)
+        $("#edit-recipient-name").val(foundTask.title);
+        $("#edit-message-text").val(foundTask.description);
+
 }
+
+const editTarefa = (id, title, description) =>{
+let taskToEdit = {id, title, description}
+console.log(taskToEdit);
+var i = listaTarefas.findIndex((t) => t.id === Number(id));
+console.log(i);
+  listaTarefas.splice(i, 1, taskToEdit);
+
+  setJsonItem(LISTA_TAREFAS, listaTarefas);
+  listarTarefas();
+}
+
+const limparCampos = () =>{
+    $("#recipient-name").val("");
+    $("#message-text").val("");
+    $("#edit-recipient-name").val("");
+    $("#edit-message-text").val("");
+    $("#id").html("");
+}
+
+ $('#save').click((e)=>{
+    let title = document.getElementById("recipient-name").value;
+    let description = document.getElementById("message-text").value;
+    salvarTarefa(title,description);
+    limparCampos();
+});
+
+ $('#edit').click((e)=>{
+    let id = document.getElementById("id").textContent;
+    let title = document.getElementById("edit-recipient-name").value;
+    let description = document.getElementById("edit-message-text").value;
+    editTarefa(id,title,description);
+    limparCampos();
+});
