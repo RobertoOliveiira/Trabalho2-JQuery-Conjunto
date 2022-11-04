@@ -4,8 +4,6 @@ var listaTarefas = [{ id: 1, title: 'Cacetar', description: 'cacetar o roxo' }]
 
 $(document).ready(() => {
   console.log("Dashboard");
-  $("#msg .alert").hide();
-  $("#btn-salvar").click((e) => salvarContato());
 
   listarTarefas();
 
@@ -28,8 +26,21 @@ const listarTarefas = () => {
   listaTarefas.forEach((c) => {
     const title = document.createElement("h3");
     const description = document.createElement("p");
+    if (c.stats ==true) {
+      title.style.textDecoration = "line-through";
+      title.style.color = "gray";
+      description.style.color = "gray";
+    }
+    else if (c.stats ==false) {
+      title.style.textDecoration = "none";
+    }
+
     const dataContainer = document.createElement("div");
     dataContainer.classList.add("container-inf");
+    const inf = document.createElement("div");
+    const checkbox = document.createElement("div");
+    checkbox.classList.add("container-check");
+    criarCheckbox(c, checkbox);
     const container = document.createElement("div");
     container.classList.add("container-task");
     const buttonContainer = document.createElement("div");
@@ -38,8 +49,10 @@ const listarTarefas = () => {
 
     $(title).html(c.title);
     $(description).html(c.description);
-    dataContainer.append(title);
-    dataContainer.append(description);
+    inf.append(title);
+    inf.append(description);
+    dataContainer.append(checkbox);
+    dataContainer.append(inf);
     container.append(dataContainer);
     container.append(buttonContainer);
     listaHTML.append(container);
@@ -48,11 +61,13 @@ const listarTarefas = () => {
 };
 
 const salvarTarefa = (title, description) => {
+
   const id = !!listaTarefas.length ? Math.max(...listaTarefas.map((t) => t.id)) + 1 : 1
   const newTask = {
     id,
     title,
-    description
+    description,
+    stats
   }
   listaTarefas.push(newTask);
   setJsonItem(LISTA_TAREFAS, listaTarefas);
@@ -60,9 +75,18 @@ const salvarTarefa = (title, description) => {
 }
 
 const handleSalvarTarefa = (e) => {
-  console.log(e)
+  console.log()
 }
-
+const criarCheckbox = (task, container) => {
+  if (task.stats ==true) {
+    return $(container).html(`
+        <input checked class="checkbox" type="checkbox" onclick="checkAction(${task.id})"></input>`);
+  }
+  else if (task.stats ==false) {
+    return $(container).html(`
+        <input class="checkbox" type="checkbox" onclick="checkAction(${task.id})"></input>`);
+  }
+}
 const criarBotao = (task, container) => {
   return $(container).html(`
         <button data-bs-toggle="modal" data-bs-target="#editModal" 
@@ -71,6 +95,18 @@ const criarBotao = (task, container) => {
         <button onclick="removeItemList(${task.id});" 
         class="botao"><img src="_img/delete.png" alt="Apagar tarefa"></button> `
   );
+}
+
+const checkAction = (id) => {
+
+  var taskToCheck = listaTarefas.find((t) => t.id === Number(id));
+  taskToCheck.stats = !taskToCheck.stats;
+  var i = listaTarefas.findIndex((t) => t.id === Number(id));
+  listaTarefas.splice(i, 1, taskToCheck);
+
+  setJsonItem(LISTA_TAREFAS, listaTarefas);
+  listarTarefas();
+
 }
 
 const removeItemList = (id) => {
@@ -91,7 +127,10 @@ const handleOpenEditTarefa = (id) => {
 }
 
 const editTarefa = (id, title, description) => {
-  let taskToEdit = { id: Number(id), title, description }
+  let taskToEdit = listaTarefas.find((t) => t.id === Number(id));
+  taskToEdit.title = title;
+  taskToEdit.description = description;
+
   console.log(taskToEdit);
   var i = listaTarefas.findIndex((t) => t.id === Number(id));
   console.log(i);
