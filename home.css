@@ -4,17 +4,20 @@
     margin: 0;
     padding: 0;
 }
+#body{
+    height: 100vh;
+background: rgb(97,139,253);
+background: linear-gradient(180deg, rgba(97,139,253,1) 0%, rgba(238,254,245,1) 100%);}
 
 header {
-    background: #6a11cb;
+    
     display: flex;
     width: 100%;
     position: relative;
-    background: -webkit-linear-gradient(to bottom, rgba(106, 17, 203, 1), rgb(151, 188, 251));
-    background: linear-gradient(to bottom, rgba(106, 17, 203, 1), rgb(153, 187, 247));
     height: 200px;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0px -8px 15px -2px rgb(0 0 0 / 60%);
     padding: 0 40px;
 }
 
@@ -44,6 +47,12 @@ header button img{
     margin-right: 10%;
 }
 
+.trol{
+    text-decoration: none;
+    color: black;
+    cursor: text;
+}
+
 .button button{
     margin: 10px;
     height: 90px;
@@ -61,8 +70,30 @@ header button img{
 .container-task:last-of-type{
     border-bottom: 0;
 }
-.container-inf {
+.container-inf { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-inf div{
     margin-left: 30px;
+}
+.container-check{
+    overflow: hidden;
+}
+
+
+
+.checkbox{
+    cursor: pointer;
+}
+
+.container-inf input{
+    min-width: 70px;
+    min-height: 70px;
+    
+    color: white;
 }
 
 .container-inf h3{
@@ -84,12 +115,22 @@ header button img{
     overflow: hidden;
     padding: 15px;
     box-shadow: 3px 3px 15px -2px rgba(0, 0, 0, 0.6);
-    
+    background-color: white;
     margin-left: 20px;
+}
+
+#create-button{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    font-size: 25px;
+    box-shadow: 3px 3px 15px -2px rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
 }
 
 .botao img{
     width: 100%;
+    background-color: white;
 
 }
 
@@ -98,4 +139,7 @@ section{
     border: 2px solid black;
     border-radius: 10px;
     margin: auto;
+    margin-bottom: 30px;
+    background-color: rgb(240, 246, 250);
 }
+

@@ -81,6 +81,5 @@ const removeItem = (key) => {
 
  $('#logout').click((e)=>{
         realizaLogoff();
-        localStorage.clear();
         window.location.href = 'index.html';
 });
