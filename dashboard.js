@@ -61,7 +61,7 @@ const listarTarefas = () => {
 };
 
 const salvarTarefa = (title, description) => {
-  stats = false;
+
   const id = !!listaTarefas.length ? Math.max(...listaTarefas.map((t) => t.id)) + 1 : 1
   const newTask = {
     id,
@@ -87,7 +87,6 @@ const criarCheckbox = (task, container) => {
         <input class="checkbox" type="checkbox" onclick="checkAction(${task.id})"></input>`);
   }
 }
-
 const criarBotao = (task, container) => {
   return $(container).html(`
         <button data-bs-toggle="modal" data-bs-target="#editModal" 
@@ -107,6 +106,7 @@ const checkAction = (id) => {
 
   setJsonItem(LISTA_TAREFAS, listaTarefas);
   listarTarefas();
+
 }
 
 const removeItemList = (id) => {
@@ -114,6 +114,7 @@ const removeItemList = (id) => {
   listaTarefas.splice(i, 1);
 
   setJsonItem(LISTA_TAREFAS, listaTarefas);
+  alert("Item excluido");
   listarTarefas();
 };
 
@@ -129,6 +130,7 @@ const editTarefa = (id, title, description) => {
   let taskToEdit = listaTarefas.find((t) => t.id === Number(id));
   taskToEdit.title = title;
   taskToEdit.description = description;
+
   console.log(taskToEdit);
   var i = listaTarefas.findIndex((t) => t.id === Number(id));
   console.log(i);
