@@ -61,7 +61,7 @@ const listarTarefas = () => {
 };
 
 const salvarTarefa = (title, description) => {
-
+  let stats = false;
   const id = !!listaTarefas.length ? Math.max(...listaTarefas.map((t) => t.id)) + 1 : 1
   const newTask = {
     id,
@@ -98,7 +98,6 @@ const criarBotao = (task, container) => {
 }
 
 const checkAction = (id) => {
-
   var taskToCheck = listaTarefas.find((t) => t.id === Number(id));
   taskToCheck.stats = !taskToCheck.stats;
   var i = listaTarefas.findIndex((t) => t.id === Number(id));
@@ -114,7 +113,6 @@ const removeItemList = (id) => {
   listaTarefas.splice(i, 1);
 
   setJsonItem(LISTA_TAREFAS, listaTarefas);
-  alert("Item excluido");
   listarTarefas();
 };
 
